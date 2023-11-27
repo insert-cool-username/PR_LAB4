@@ -3,7 +3,6 @@ from GFLocalization import *
 from MapFeature import *
 from EKF import *
 import math
-from blockarray import *
 
 class FEKFMBL(GFLocalization, MapFeature):
     """
@@ -63,10 +62,9 @@ class FEKFMBL(GFLocalization, MapFeature):
         :param xk: mean state vector used as linearization point
         :return: Joint stacked vector of the expected mesurement and feature observations
         """
-        h_m = self.hm(xk)
-        h_f = self.hf(xk)
 
-        h_mf = np.block([[h_m], [h_f]])  # if (h_m is not None and h_f is not None) else h_m if h_m is not None else h_f
+        # TODO: To be completed by the student
+
         return h_mf
 
     def hm(self,xk):
@@ -79,7 +77,9 @@ class FEKFMBL(GFLocalization, MapFeature):
         :return: expected measruments.
         """
 
-        return super().h(xk)
+        # TODO: To be completed by the student
+
+        return _hm
 
     def SquaredMahalanobisDistance(self, hfj, Pfj, zfi, Rfi):
         """
@@ -91,9 +91,9 @@ class FEKFMBL(GFLocalization, MapFeature):
         :param Rfi: feature observation covariance
         :return: Squared Mahalanobis distance between the expected feature observation :math:`hf_j` and the feature observation :math:`z_{f_i}`
         """
-        nu_ij = zfi - hfj  # Compute the innovation
-        S_ij = Rfi + Pfj  # Compute the innovation covariance
-        D2_ij = float(nu_ij.T @ np.linalg.inv(S_ij) @ nu_ij)  # Compute the Mahalanobis distance
+
+        # TODO: To be completed by the student
+
         return D2_ij
 
     def IndividualCompatibility(self, D2_ij, dof, alpha):
@@ -105,7 +105,9 @@ class FEKFMBL(GFLocalization, MapFeature):
         :param alpha: confidence level
         :return: bolean value indicating if the Mahalanobis distance is smaller than the threshold defined by the confidence level
         """
-        return D2_ij < scipy.stats.chi2.ppf(alpha, dof)
+        # TODO: To be completed by the student
+
+        return isCompatible
 
     def ICNN(self, hf, Phf, zf, Rf, dim):
         """
@@ -119,28 +121,12 @@ class FEKFMBL(GFLocalization, MapFeature):
         :param zf: vector of feature observations
         :param Rf: Covariance matrix of the feature observations
         :param dim: feature dimensionality
-        :return: The vector of asociation hypothesiss
+        :return: The vector of asociation hypothesis H
         """
-        hf=BlockArray(hf,dim); Phf=BlockArray(Phf,dim)
-        zf=BlockArray(zf,dim); Rf=BlockArray(Rf,dim)
 
-        nhf = hf.size // dim # number of expected feature observations
-        nzf = zf.size // dim # number of features observed
-        Hp = []  # initialize the pairing Hypotessis list
+        # TODO: To be completed by the student
 
-        for Fj in range(nzf):  # for each feature observation
-            nearest = None
-            D2_ij_min = math.inf  # initialize the minimum Mahalanobis distance
-            for Fi in range(nhf):  # for each feature in hf
-                xFi, PFi = hf[[Fi]], Phf[[Fi,Fi]]
-                zFj, RFj = zf[[Fj]], Rf[[Fj,Fj]]
-                D2_ij = self.SquaredMahalanobisDistance(xFi, PFi, zFj, RFj)
-                if self.IndividualCompatibility(D2_ij, dim, self.alpha) and D2_ij < D2_ij_min:
-                    nearest = Fi
-                    D2_ij_min = D2_ij
-
-            Hp.append(nearest)
-        return Hp
+        return H
 
     def DataAssociation(self, xk, Pk, zf, Rf):
         """
@@ -159,24 +145,11 @@ class FEKFMBL(GFLocalization, MapFeature):
         :param Pk: covariance matrix of the state vector
         :param zf: vector of feature observations
         :param Rf: Covariance matrix of the feature observations
-        :return: The vector of asociation hypothesiss
+        :return: The vector of asociation hypothesis H
         """
-        if zf.shape[0]==0:
-            return []
 
-        #d=self.zfi_dim # dimension of each feature observation
-        hf=BlockArray(np.zeros((self.nf*self.zfi_dim,1)),self.zfi_dim)
-        Phf=BlockArray(np.zeros((self.nf*self.zfi_dim,self.nf*self.zfi_dim)),self.zfi_dim)
-        for Fj in range(self.nf):    # for mapped features
-            h_Fj = self.hfj(xk, Fj)
-            J= self.Jhfjx(xk, Fj)
-            Ph_Fj = J @ Pk @ J.T
-            hf[[Fj]]=h_Fj
-            Phf[[Fj,Fj]]=Ph_Fj
-            #print("hf[[Fj]]",hf[[Fj]])
-            #print(self.IndividualCompatibility(self.SquaredMahalanobisDistance(h_Fj,Ph_Fj,zf[0:2],Rf[0:2,0:2]),2,0.95))
+        # TODO: To be completed by the student
 
-        H = self.ICNN(hf, Phf, zf, Rf,self.zfi_dim) # Individual Compatibility Nearest Neighbor
         return H
 
     def Localize(self, xk_1, Pk_1):
@@ -189,24 +162,10 @@ class FEKFMBL(GFLocalization, MapFeature):
         :param Pk_1: previous covariance matrix
         :return xk, Pk: updated state vector and covariance matrix
         """
-        uk, Qk = self.GetInput()
-        self.xk_1=xk_1
-        self.Pk_1=Pk_1
 
-        (self.xk_bar, self.Pk_bar) = self.Prediction(uk, Qk, self.xk_1, self.Pk_1) if uk.size > 0 else (self.xk_1, self.Pk_1)
+        # TODO: To be completed by the student
 
-        zm, Rm, Hm, Vm = self.GetMeasurements();
-        zf, Rf = self.GetFeatures();
-
-        self.H = self.DataAssociation(self.xk_bar, self.Pk_bar,  zf, Rf)
-        zk, Rk, Hk, Vk, znp, Rnp = self.StackMeasurementsAndFeatures(zm, Rm, Hm, Vm,zf, Rf, self.H)
-        (self.xk, self.Pk) = self.Update(zk, Rk, self.xk_bar, self.Pk_bar, Hk, Vk) if zk.size>0 else (self.xk_bar, self.Pk_bar)
-
-        self.Log(self.robot.xsk, self.xk, self.Pk, self.xk_bar, zm)  # log the results for plotting
-
-        self.PlotUncertainty(zf,Rf)
-
-        return self.xk, self.Pk
+        return xk, Pk
 
     def StackMeasurementsAndFeatures(self, zm, Rm, Hm, Vm, zf, Rf, H):
         """
@@ -229,13 +188,7 @@ class FEKFMBL(GFLocalization, MapFeature):
         :return: vector of joint measurement and feature observations :math:`z_k` and its covariance matrix :math:`R_k`
         """
 
-        zp, Rp, Hp, Vp, znp, Rnp = self.SplitFeatures(zf, Rf, H)
-        if zm.size == 0:
-            zk, Rk, Hk, Vk = zp, Rp, Hp, Vp
-        elif zp.size == 0:
-            zk, Rk, Hk, Vk = zm, Rm, Hm, Vm
-        else:
-            zk, Rk, Hk, Vk = np.block([[zm], [zp]]), scipy.linalg.block_diag(Rm, Rp), np.block([[Hm], [Hp]]), scipy.linalg.block_diag(Vm, Vp)
+        # TODO: To be completed by the student
 
         return zk, Rk, Hk, Vk, znp, Rnp
 
@@ -252,23 +205,8 @@ class FEKFMBL(GFLocalization, MapFeature):
         :param H: hypothesis of feature associations
         :return: vector of paired feature observations :math:`z_p`, covariance matrix of paired feature observations :math:`R_p`, vector of non-paired feature observations :math:`z_{np}`, covariance matrix of non-paired feature observations :math:`R_{np}`.
         """
-        zf=BlockArray(zf,self.zfi_dim)
-        Rf=BlockArray(Rf,self.zfi_dim)
+        # TODO: To be completed by the student
 
-        Hp = np.zeros((0, self.xk_bar.shape[0]))  # empty matrix
-        Vp = np.zeros((0, 0))  # empty matrix
-
-        nzf = len(H)  # number of features in the observation Hypothesis
-        zp, Rp, znp, Rnp = np.zeros((0, 1)), np.zeros((0, 0)), np.zeros((0, 1)), np.zeros((0, 0))
-        for i in range(nzf):  # for each feature observation in the observation Hypothesis
-            if H[i] is not None:  # if the feature is associated
-                zp = np.block([[zp], [zf[[i]]]])
-                Rp = scipy.linalg.block_diag(Rp, Rf[[i,i]]) if Rp is not None else Rf[[i,i]]
-                Hp=np.block([[Hp],[self.Jhfjx(self.xk_bar, H[i])]])
-                Vp=scipy.linalg.block_diag(Vp,np.eye(self.zfi_dim))
-            else:
-                znp = np.block([[znp], [zf[[i]]]])
-                Rnp = scipy.linalg.block_diag(Rnp, Rf[[i,i]]) if Rnp.size > 0 else Rf[[i,i]]
         return zp, Rp, Hp, Vp, znp, Rnp
 
     def PlotFeatureObservationUncertainty(self, zf, Rf, color):  # plots the feature observation uncertainty ellipse
@@ -290,7 +228,7 @@ class FEKFMBL(GFLocalization, MapFeature):
             self.plt_zf_ellipse = []
             self.plt_zf_line = []
 
-        NxB = self._GetRobotState(self.robot.xsk)
+        NxB = self.GetRobotPose(self.robot.xsk)
 
         # For all feature observations
         nzf = 0 if zf is None else zf.size // self.zfi_dim
@@ -337,49 +275,6 @@ class FEKFMBL(GFLocalization, MapFeature):
 
             #self.PlotSampleObservationSpace(self.xk, h_Fj, P_h_Fj, 100)
 
-    def PlotSampleObservationSpace(self, NxB, BxFj, BPFj, n, color='r.'):
-        """
-        Plots n samples from a Gaussian distribution with mean :math:`x` and covariance :math:`P`. This method is called by :meth:`FEKFMBL.PlotUncertainty`.
-        This is a method for testing. It can be used to compare the uncertainty ellipse with the samples.
-
-        :param x: mean of the Gaussian distribution
-        :param P: covariance of the Gaussian distribution
-        :param n: number of samples
-        :param color: color of the samples
-        """
-        ns = len(self.plt_samples)
-        if ns > 0:
-            for i in range(ns): self.plt_samples[i].remove()
-            self.plt_samples = []
-
-        Bsample = np.random.multivariate_normal(BxFj[0:,0],BPFj, n).T
-
-        for i in range(Bsample.shape[1]):
-            Nsample=self.g(NxB,self.Feature(Bsample[0:,i].reshape(2,1))).ToCartesian()
-            plt_sample, = plt.plot(Nsample[0], Nsample[1], color, markersize=0.5)
-            self.plt_samples.append(plt_sample)
-
-    def PlotSample(self, x, P, n, color='r.'):
-        """
-        Plots n samples from a Gaussian distribution with mean :math:`x` and covariance :math:`P`. This method is called by :meth:`FEKFMBL.PlotUncertainty`.
-        This is a method for testing. It can be used to compare the uncertainty ellipse with the samples.
-
-        :param x: mean of the Gaussian distribution
-        :param P: covariance of the Gaussian distribution
-        :param n: number of samples
-        :param color: color of the samples
-        """
-        ns = len(self.plt_samples)
-        if ns > 0:
-            for i in range(ns): self.plt_samples[i].remove()
-            self.plt_samples = []
-
-        sample = np.random.multivariate_normal(x[0:2, 0], P[0:2, 0:2], n).T
-
-        for i in range(sample.shape[1]):
-            plt_sample, = plt.plot(sample[0, i], sample[1, i], color, markersize=0.5)
-            self.plt_samples.append(plt_sample)
-
     def PlotRobotUncertainty(self):  # plots the robot trajectory and its uncertainty ellipse
         """
         Plots the robot trajectory and its uncertainty ellipse. This method is called by :meth:`FEKFMBL.PlotUncertainty`.
@@ -410,64 +305,16 @@ class FEKFMBL(GFLocalization, MapFeature):
             self.PlotFeatureObservationUncertainty(zf, Rf,'b')
             self.PlotExpectedFeaturesObservationsUncertainty()
 
-    def _GetRobotState(self, xk):
+    def GetRobotPose(self, xk):
         """
-        Returns the robot state from the state vector.
+        Gets the robot pose from the state vector.
 
         :param xk: mean of the state vector:math:`x_k`
-        :return: mean robot state :math:`x_{B_k}`
+        :return: The robot pose :math:`x_{B_k}`
         """
-        #return xk[0:self.xB_dim]
-        xk=BlockArray(xk,self.xF_dim, self.xB_dim, self.xBpose_dim)
-        return xk[[FEKFMBL.xB]]
+        return self.Pose(xk[0:self.xBpose_dim])
 
-    def _SetRobotState(self, xk, xB):
-        """
-        Updates the robot state within the state vector.
-
-        :param xk: mean of the state vector:math:`x_k`
-        :param xB: mean robot state :math:`x_{B_k}`
-        :return: updatd mean  state vector :math:`x_{k}`
-        """
-        #xk[0:self.xB_dim] = xB
-
-        xk=BlockArray(xk,self.xF_dim, self.xB_dim, self.xBpose_dim)
-        xk[[FEKFMBL.xB]]=xB
-
-        return xk
-
-    def _GetRobotStateCovariance(self, Pk):
-        """
-        Returns the robot covariance from the state covariance matrix.
-
-        :param Pk: state vector covariance matrix :math:`P_k`
-        :return: robot state covariance :math:`P_{B_k}`
-        """
-        return Pk[0:self.xB_dim, 0:self.xB_dim]
-
-    def _SetRobotStateCovariance(self, Pk, PB):
-        """
-        Updates the robot covariance from the state covariance matrix.
-
-        :param Pk: state vector covariance matrix :math:`P_k`
-        :param PB: robot state covariance :math:`P_{B_k}`
-        :return: updatd state covariance matrix :math:`P_{k}`
-        """
-        Pk[0:self.xB_dim, 0:self.xB_dim] = PB
-        return Pk
-
-    def _SetRobotPose(self, xk, xB):
-        """
-        Updates the robot pose within the state vector.
-
-        :param xk: mean of the state vector:math:`x_k`
-        :param xB: mean robot pose :math:`x_{B_k}`
-        :return: updatd mean  state vector :math:`x_{k}`
-        """
-        xk[0:self.xB_dim] = xB
-        return xk
-
-    def _GetRobotPoseCovariance(self, Pk):
+    def GetRobotPoseCovariance(self, Pk):
         """
         Returns the robot pose covariance from the state covariance matrix.
 
@@ -475,53 +322,4 @@ class FEKFMBL(GFLocalization, MapFeature):
         :return: robot pose covariance :math:`P_{B_k}`
         """
         return Pk[0:self.xBpose_dim, 0:self.xBpose_dim]
-
-    def _SetRobotPoseCovariance(self, Pk, PB):
-        """
-        Updates the robot pose covariance from the state covariance matrix.
-
-        :param Pk: state vector covariance matrix :math:`P_k`
-        :param PB: robot pose covariance :math:`P_{B_k}`
-        :return: updated state covariance matrix :math:`P_{k}`
-        """
-        Pk[0:self.xBpose_dim, 0:self.xBpose_dim] = PB
-        return Pk
-
-    # def FeatureObservation(self, zf, i):
-    #     """
-    #     Returns the i-th feature observation from the feature observation vector.
-    #
-    #     :param zf: vector of feature observations :math:`z_f`
-    #     :param i: index of the feature observation
-    #     :return: ith feature observation :math:`z_{f_i}`
-    #     """
-    #     v=BlockArray(zf,2)
-    #
-    #     return v[[i]] #GetBlockVector(zf,i,2)
-    #
-    #
-    # def FeatureObservationCovariance(self, Rf, i):
-    #     """
-    #     Returns the i-th feature observation covariance from the feature observation covariance matrix.
-    #
-    #     :param Rf: feature observation covariance matrix :math:`R_f`
-    #     :param i: index of the feature observation
-    #     :return: covariance of the ith feature observation :math:`R_{f_i}`
-    #     """
-    #     Rfi = Rf[i * self.zfi_dim:(i + 1) * self.zfi_dim, i * self.zfi_dim:(i + 1) * self.zfi_dim].reshape(self.zfi_dim,self.zfi_dim)
-    #     R=BlockArray(Rf,2)
-    #     return R[[i,i]] #Rfi
-
-# def GetBlockVector(v, i, dim):
-#     return v[i * dim:(i + 1) *dim]
-#
-# def SetBlockVector(ov, iv, i, dim):
-#     ov[i * dim:(i + 1) *dim]=iv
-#
-# def GetBlockDiagMatrix(M,i,dim):
-#     BM=M[i * dim:(i + 1) *dim,i * dim:(i + 1) *dim] if M.size>0 else np.zeros((0,0))
-#     return BM
-#
-# def SetBlockDiagMatrix(OM,IM,i,dim):
-#     OM[i * dim:(i + 1) *dim,i * dim:(i + 1) *dim]=IM
 

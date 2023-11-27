@@ -14,70 +14,45 @@ class EKF_3DOFDifferentialDriveCtVelocity(GFLocalization, DR_3DOFDifferentialDri
         self.index = [IndexStruct("x", 0, None), IndexStruct("y", 1, None), IndexStruct("yaw", 2, 1),
                  IndexStruct("u", 3, 2), IndexStruct("v", 4, 3), IndexStruct("yaw_dot", 5, None)]
 
-        # TODO: To decide the best place to do this.
-        # self.xB_dim = 3  # dimension of the robot state vector
-        # self.xBPose_dim = 3  # dimension of the robot pose within the state vector
-
-        super().__init__(self.index, kSteps, robot, self.x0, self.P0, *args) # this line must appear here. do not move it.
-
-        # Converts from encoder pulses to linear and angular velocities
-        # [u,v]^T= Ke · [nL, nR]^T
-        self.Kn = np.array([[np.pi * robot.wheelRadius / (robot.pulse_x_wheelTurns * robot.dt),
-                        np.pi * robot.wheelRadius / (robot.pulse_x_wheelTurns * robot.dt)],
-                       [-2 * np.pi * robot.wheelRadius / (robot.pulse_x_wheelTurns * robot.wheelBase * robot.dt),
-                        2 * np.pi * robot.wheelRadius / (robot.pulse_x_wheelTurns * robot.wheelBase * robot.dt)]])
-
-        # converts from linear and angular velocities to encoder pulses
-        # [nL, nR]^T = Ke_inv · [u,r]^T
-        self.Kn_inv = np.linalg.inv(self.Kn)
+        # TODO: To be completed by the student
 
     def f(self, xk_1, uk):
-        etak_1 = Pose3D(xk_1[0:3])  # extract position and heading
-        nuk_1 = xk_1[3:6]  # extract velocity and angular velocity
+        # TODO: To be completed by the student
 
-        xk_bar = np.block([[etak_1.oplus(nuk_1 * self.dt)],
-                           [nuk_1]])  # compute state prediction
         return xk_bar
 
     def Jfx(self, xk_1):
-        etak_1 = Pose3D(xk_1[0:3])  # extract position and heading
-        nuk_1 = xk_1[3:6]  # extract velocity and angular velocity
-        J = np.block([[etak_1.J_1oplus(nuk_1 * self.dt), etak_1.J_2oplus() * self.dt],
-                      [np.zeros((3, 3)), np.eye(3)]])
+        # TODO: To be completed by the student
+
         return J
 
     def Jfw(self, xk_1):
-        etak_1 = Pose3D(xk_1[0:3])  # extract position and heading
+        # TODO: To be completed by the student
 
-        J = np.block([[etak_1.J_2oplus() * 0.5 * self.dt ** 2],
-                      [np.eye(3) * self.dt]])
         return J
 
-    def h(self,xk):#:hm(self, xk):
-        h_yaw = xk[2,0]  # extract pose
-        nu = np.array([xk[3,0],xk[5,0]]).reshape(2,1) # extract velocity
-        h_n = self.Kn_inv @ nu
+    def h(self, xk):  #:hm(self, xk):
+        # TODO: To be completed by the student
 
-        h=np.zeros((0, 1))
-
-        if self.yaw:
-            h=np.block([[h],[h_yaw]])
-        if self.vel:
-            h=np.block([[h],[h_n]])
-
-        return h  # return heading measurement (yaw) & linear velocity
+        return h  # return the expected observations
 
     def GetInput(self):
         """
 
-        :return:
+        :return: uk,Qk:
         """
-        uk = np.zeros((3, 1))
-        # Covariance of the motion model computed from the covariance of the acceleration noise
-        self.Qk = self.robot.Qsk
+        # TODO: To be completed by the student
 
-        return uk, self.Qk
+        return uk, Qk
 
+    def GetMeasurements(self):  # override the observation model
+        """
+
+        :return: zk, Rk, Hk, Vk
+        """
+        # TODO: To be completed by the student
+
+        return zk, Rk, Hk, Vk
     def GetMeasurements(self):  # override the observation model
         """
 

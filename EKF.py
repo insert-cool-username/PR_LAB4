@@ -56,7 +56,7 @@ class EKF(GaussianFilter):
         :param xk: mean of the predicted state vector. By default it is taken from the class attribute.
         :return: expected observation vector
         """
-        pass #return self.hm(xk_bar)
+        pass
 
     def Prediction(self, uk, Qk, xk_1=None, Pk_1=None):
         """
@@ -76,10 +76,8 @@ class EKF(GaussianFilter):
         self.Qk = Qk  # store the input and noise covariance for logging
 
         # KF equations begin here
-        self.xk_bar = self.f(self.xk_1, self.uk)  # predict the state vector
-        Ak = self.Jfx(self.xk_1);
-        Wk = self.Jfw(self.xk_1)
-        self.Pk_bar = Ak @ self.Pk_1 @ Ak.T + Wk @ self.Qk @ Wk.T  # predict the covariance matrix
+        # TODO: To be implemented by the student
+
         return self.xk_bar, self.Pk_bar
 
     def Update(self, zk, Rk, xk_bar, Pk_bar, Hk, Vk):
@@ -102,15 +100,7 @@ class EKF(GaussianFilter):
         self.Rk = Rk  # store the observation and noise covariance for logging
 
         # KF equations begin here
-        # Hk = self.Jhx(self.xk_bar) if Hk is None else Hk
-        # Vk = self.Jhv(self.xk_bar) if Vk is None else Vk
 
-        hx = self.h(self.xk_bar)
-        yk = self.zk - hx  # innovation
-        Sk = Hk @ self.Pk_bar @ Hk.T + Vk @ self.Rk @ Vk.T  # innovation covariance
-        Kk = self.Pk_bar @ Hk.T @ np.linalg.inv(Sk)  # Kalman gain
-        self.xk = self.xk_bar + Kk @ yk
-        I = np.eye(len(self.xk))
-        self.Pk = (I - Kk @ Hk) @ self.Pk_bar @ (I - Kk @ Hk).T + Kk @ (Vk @ self.Rk @ Vk.T) @ Kk.T
+        # TODO: To be implemented by the student
 
         return self.xk, self.Pk

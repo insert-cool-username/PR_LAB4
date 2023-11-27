@@ -506,10 +506,6 @@ The first one provides the basic functionality of a localization algorithm, whil
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>xBpose_dim</strong> – dimensionality of the robot pose within the state vector</p></li>
-<li><p><strong>xB_dim</strong> – dimensionality of the state vector</p></li>
-<li><p><strong>xF_dim</strong> – dimentsionality of a feature</p></li>
-<li><p><strong>zfi_dim</strong> – dimensionality of a single feature observation</p></li>
 <li><p><strong>M</strong> – Feature Based Map <span class="math notranslate nohighlight">\(M =[^Nx_{F_1}^T~...~^Nx_{F_{n_f}}^T]^T\)</span></p></li>
 <li><p><strong>alpha</strong> – Chi2 tail probability. Confidence interaval of the individual compatibility test</p></li>
 <li><p><strong>args</strong> – arguments to be passed to the EKFLocalization constructor</p></li>
@@ -523,20 +519,20 @@ The first one provides the basic functionality of a localization algorithm, whil
 <span class="sig-name descname"><span class="pre">h</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xk</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FEKFMBL.FEKFMBL.h" title="Link to this definition">¶</a></dt>
 <dd><p>We do differenciate two types of observations:</p>
 <ul class="simple">
-<li><p>Measurements: :math:<a href="#id2"><span class="problematic" id="id3">`</span></a>z_m`correspond to observations of the state variable (position, velocity, etc…)</p></li>
-<li><p>Feature Observations: <span class="math notranslate nohighlight">\(z_f\)</span> correspond to observations of the features (CartesianFeature, PolarFeature, EsphericalFeature, etc…).</p></li>
+<li><p>Measurements: :math:<a href="#id2"><span class="problematic" id="id3">`</span></a>z_m`corresponds to observations of the state vector (position, velocity, etc…)</p></li>
+<li><p>Feature Observations: <span class="math notranslate nohighlight">\(z_f\)</span> correspond to observations of the features (CartesianFeature, PolarFeature, SphericalFeature, etc…).</p></li>
 </ul>
-<p>This method implements the full observation model including the measurements and feature observations:</p>
+<p>This method implements the full direct observation model including the measurements and feature observations:</p>
 <div class="math notranslate nohighlight" id="equation-eq-mblh">
 <span class="eqno">(10)<a class="headerlink" href="#equation-eq-mblh" title="Link to this equation">¶</a></span>\[\begin{split}z_k = h(x_k,v_k) \Rightarrow \begin{bmatrix} z_m \\ z_f \end{bmatrix} = \begin{bmatrix} h_m(x_k,v_m) \\ h_f(x_k,v_f) \end{bmatrix} ~;~ v_k=[v_m^T ~v_f^T]^T\end{split}\]</div>
 <p>This method calls <code class="xref py py-meth docutils literal notranslate"><span class="pre">h_m()</span></code> to compute the expected measurements and  the <a class="reference internal" href="#MapFeature.MapFeature.hf" title="MapFeature.MapFeature.hf"><code class="xref py py-meth docutils literal notranslate"><span class="pre">MapFeature.MapFeature.hf()</span></code></a> method to compute the expected feature observations.
-The method returns an stacked vector of expected measurements and feature observations.</p>
+The method returns a stacked vector of expected measurements and feature observations.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>xk</strong> – mean state vector used as linearization point</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>Joint stacked vector of the expected mesurement and feature observations</p>
+<dd class="field-even"><p>Joint stacked vector of the expected measurement and feature observations</p>
 </dd>
 </dl>
 </dd></dl>
@@ -791,6 +787,20 @@ the online  visualization.</p>
 </dl>
 </dd></dl>
 
+<dl class="py method">
+<dt class="sig sig-object py" id="FEKFMBL.FEKFMBL.GetRobotPoseCovariance">
+<span class="sig-name descname"><span class="pre">GetRobotPoseCovariance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Pk</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FEKFMBL.FEKFMBL.GetRobotPoseCovariance" title="Link to this definition">¶</a></dt>
+<dd><p>Returns the robot pose covariance from the state covariance matrix.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>Pk</strong> – state vector covariance matrix <span class="math notranslate nohighlight">\(P_k\)</span></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>robot pose covariance <span class="math notranslate nohighlight">\(P_{B_k}\)</span></p>
+</dd>
+</dl>
+</dd></dl>
+
 </dd></dl>
 
 </section>
@@ -814,10 +824,6 @@ and an input velocity motion model (<span class="math notranslate nohighlight">\
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>xBpose_dim</strong> – dimensionality of the robot pose within the state vector</p></li>
-<li><p><strong>xB_dim</strong> – dimensionality of the state vector</p></li>
-<li><p><strong>xF_dim</strong> – dimentsionality of a feature</p></li>
-<li><p><strong>zfi_dim</strong> – dimensionality of a single feature observation</p></li>
 <li><p><strong>M</strong> – Feature Based Map <span class="math notranslate nohighlight">\(M =[^Nx_{F_1}^T~...~^Nx_{F_{n_f}}^T]^T\)</span></p></li>
 <li><p><strong>alpha</strong> – Chi2 tail probability. Confidence interaval of the individual compatibility test</p></li>
 <li><p><strong>args</strong> – arguments to be passed to the EKFLocalization constructor</p></li>
@@ -853,10 +859,6 @@ and an input displacement motion model (<span class="math notranslate nohighligh
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>xBpose_dim</strong> – dimensionality of the robot pose within the state vector</p></li>
-<li><p><strong>xB_dim</strong> – dimensionality of the state vector</p></li>
-<li><p><strong>xF_dim</strong> – dimentsionality of a feature</p></li>
-<li><p><strong>zfi_dim</strong> – dimensionality of a single feature observation</p></li>
 <li><p><strong>M</strong> – Feature Based Map <span class="math notranslate nohighlight">\(M =[^Nx_{F_1}^T~...~^Nx_{F_{n_f}}^T]^T\)</span></p></li>
 <li><p><strong>alpha</strong> – Chi2 tail probability. Confidence interaval of the individual compatibility test</p></li>
 <li><p><strong>args</strong> – arguments to be passed to the EKFLocalization constructor</p></li>
@@ -889,10 +891,6 @@ and an input displacement motion model (<span class="math notranslate nohighligh
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>xBpose_dim</strong> – dimensionality of the robot pose within the state vector</p></li>
-<li><p><strong>xB_dim</strong> – dimensionality of the state vector</p></li>
-<li><p><strong>xF_dim</strong> – dimentsionality of a feature</p></li>
-<li><p><strong>zfi_dim</strong> – dimensionality of a single feature observation</p></li>
 <li><p><strong>M</strong> – Feature Based Map <span class="math notranslate nohighlight">\(M =[^Nx_{F_1}^T~...~^Nx_{F_{n_f}}^T]^T\)</span></p></li>
 <li><p><strong>alpha</strong> – Chi2 tail probability. Confidence interaval of the individual compatibility test</p></li>
 <li><p><strong>args</strong> – arguments to be passed to the EKFLocalization constructor</p></li>
@@ -925,10 +923,6 @@ and an input displacement motion model (<span class="math notranslate nohighligh
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>xBpose_dim</strong> – dimensionality of the robot pose within the state vector</p></li>
-<li><p><strong>xB_dim</strong> – dimensionality of the state vector</p></li>
-<li><p><strong>xF_dim</strong> – dimentsionality of a feature</p></li>
-<li><p><strong>zfi_dim</strong> – dimensionality of a single feature observation</p></li>
 <li><p><strong>M</strong> – Feature Based Map <span class="math notranslate nohighlight">\(M =[^Nx_{F_1}^T~...~^Nx_{F_{n_f}}^T]^T\)</span></p></li>
 <li><p><strong>alpha</strong> – Chi2 tail probability. Confidence interaval of the individual compatibility test</p></li>
 <li><p><strong>args</strong> – arguments to be passed to the EKFLocalization constructor</p></li>
@@ -961,10 +955,6 @@ and a Constant Velocity Motion model with encoder readings. The class inherits f
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>xBpose_dim</strong> – dimensionality of the robot pose within the state vector</p></li>
-<li><p><strong>xB_dim</strong> – dimensionality of the state vector</p></li>
-<li><p><strong>xF_dim</strong> – dimentsionality of a feature</p></li>
-<li><p><strong>zfi_dim</strong> – dimensionality of a single feature observation</p></li>
 <li><p><strong>M</strong> – Feature Based Map <span class="math notranslate nohighlight">\(M =[^Nx_{F_1}^T~...~^Nx_{F_{n_f}}^T]^T\)</span></p></li>
 <li><p><strong>alpha</strong> – Chi2 tail probability. Confidence interaval of the individual compatibility test</p></li>
 <li><p><strong>args</strong> – arguments to be passed to the EKFLocalization constructor</p></li>
@@ -1047,6 +1037,7 @@ and a Constant Velocity Motion model with encoder readings. The class inherits f
 <li><a class="reference internal" href="#FEKFMBL.FEKFMBL.PlotSample"><code class="docutils literal notranslate"><span class="pre">FEKFMBL.PlotSample()</span></code></a></li>
 <li><a class="reference internal" href="#FEKFMBL.FEKFMBL.PlotRobotUncertainty"><code class="docutils literal notranslate"><span class="pre">FEKFMBL.PlotRobotUncertainty()</span></code></a></li>
 <li><a class="reference internal" href="#FEKFMBL.FEKFMBL.PlotUncertainty"><code class="docutils literal notranslate"><span class="pre">FEKFMBL.PlotUncertainty()</span></code></a></li>
+<li><a class="reference internal" href="#FEKFMBL.FEKFMBL.GetRobotPoseCovariance"><code class="docutils literal notranslate"><span class="pre">FEKFMBL.GetRobotPoseCovariance()</span></code></a></li>
 </ul>
 </li>
 </ul>

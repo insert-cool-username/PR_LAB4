@@ -80,7 +80,7 @@
 <dl class="py method">
 <dt class="sig sig-object py" id="GFLocalization.GFLocalization.GetInput">
 <span class="sig-name descname"><span class="pre">GetInput</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#GFLocalization.GFLocalization.GetInput" title="Link to this definition">¶</a></dt>
-<dd><p>Get the input from the robot. Relates to the motion model as follows:</p>
+<dd><p>Gets the input from the robot. Relates to the motion model as follows:</p>
 <div class="math notranslate nohighlight" id="equation-eq-f-gflocalization">
 <span class="eqno">(1)<a class="headerlink" href="#equation-eq-f-gflocalization" title="Link to this equation">¶</a></span>\[\begin{split}x_k &amp;= f(x_{k-1},u_k,w_k) \\
 w_k &amp;= N(0,Q_k)\end{split}\]</div>
@@ -330,11 +330,8 @@ u_k&amp;=[u_k, v_k, w_k, r_k]^T\end{split}\]</div>
 <dt class="sig sig-object py" id="EKF_4DOFAUV_InputVelocityMM_DVLDepthYawOM.EKF_4DOFAUV_InputVelocityMM_DVLDepthYawOM.h">
 <span class="sig-name descname"><span class="pre">h</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xk_bar</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#EKF_4DOFAUV_InputVelocityMM_DVLDepthYawOM.EKF_4DOFAUV_InputVelocityMM_DVLDepthYawOM.h" title="Link to this definition">¶</a></dt>
 <dd><p>The observation model of the EKF is given by:</p>
-<dl class="simple">
-<dt>..math::</dt><dd><p>zk=h(xk,v_k)
-:label:èq-EKF-observation-model</p>
-</dd>
-</dl>
+<div class="math notranslate nohighlight" id="equation-eq-ekf-observation-model">
+<span class="eqno">(5)<a class="headerlink" href="#equation-eq-ekf-observation-model" title="Link to this equation">¶</a></span>\[z_k=h(x_k,v_k)\]</div>
 <p>This method computes the mean of this direct observation model. Therefore it does not depend on v_k since it is
 a zero mean Gaussian noise.</p>
 <dl class="field-list simple">
@@ -352,14 +349,14 @@ a zero mean Gaussian noise.</p>
 <span class="sig-name descname"><span class="pre">Jhmx</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xk</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#EKF_4DOFAUV_InputVelocityMM_DVLDepthYawOM.EKF_4DOFAUV_InputVelocityMM_DVLDepthYawOM.Jhmx" title="Link to this definition">¶</a></dt>
 <dd><p>Jacobian of the measurement model with respect to the state vector:</p>
 <div class="math notranslate nohighlight" id="equation-eq-jhmx-ekf-4dofauv-velocitymm-dvldepthyawom">
-<span class="eqno">(5)<a class="headerlink" href="#equation-eq-jhmx-ekf-4dofauv-velocitymm-dvldepthyawom" title="Link to this equation">¶</a></span>\[\begin{split}J_{hmx}=H_{m_k}=\frac{\partial h_m(x_k,v_k)}{\partial x_k} = \frac{\partial [z_{depth}^T, \psi_{compass}^T]^T}{\partial x_k}
+<span class="eqno">(6)<a class="headerlink" href="#equation-eq-jhmx-ekf-4dofauv-velocitymm-dvldepthyawom" title="Link to this equation">¶</a></span>\[\begin{split}J_{hmx}=H_{m_k}=\frac{\partial h_m(x_k,v_k)}{\partial x_k} = \frac{\partial [z_{depth}^T, \psi_{compass}^T]^T}{\partial x_k}
 =\begin{bmatrix} 0 &amp; 0 &amp; 1 &amp; 0 \\ 0 &amp; 0 &amp; 0 &amp; 1 \end{bmatrix}\end{split}\]</div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>xk</strong> – mean state vector containing the robot position and heading (<span class="math notranslate nohighlight">\(x_k=[x_k^T, y_k^T, z_k^T, \psi_k^T]^T\)</span>) represented in the N-Frame</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>observation matrix (Jacobian) matrix eq. <a class="reference internal" href="#equation-eq-jhmx-ekf-4dofauv-velocitymm-dvldepthyawom">(5)</a>.</p>
+<dd class="field-even"><p>observation matrix (Jacobian) matrix eq. <a class="reference internal" href="#equation-eq-jhmx-ekf-4dofauv-velocitymm-dvldepthyawom">(6)</a>.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -369,13 +366,13 @@ a zero mean Gaussian noise.</p>
 <span class="sig-name descname"><span class="pre">Jhmv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xk_bar</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#EKF_4DOFAUV_InputVelocityMM_DVLDepthYawOM.EKF_4DOFAUV_InputVelocityMM_DVLDepthYawOM.Jhmv" title="Link to this definition">¶</a></dt>
 <dd><p>Jacobian of the measurement model with respect to the measurement noise vector:</p>
 <div class="math notranslate nohighlight" id="equation-eq-jhmv-ekf4dofauvvelocitymmdvldepthyawom">
-<span class="eqno">(6)<a class="headerlink" href="#equation-eq-jhmv-ekf4dofauvvelocitymmdvldepthyawom" title="Link to this equation">¶</a></span>\[J_{hmv}=V_{m_k}=\frac{\partial h_m(x_k,v_k)}{\partial v_k} = I_{2 \times 2}\]</div>
+<span class="eqno">(7)<a class="headerlink" href="#equation-eq-jhmv-ekf4dofauvvelocitymmdvldepthyawom" title="Link to this equation">¶</a></span>\[J_{hmv}=V_{m_k}=\frac{\partial h_m(x_k,v_k)}{\partial v_k} = I_{2 \times 2}\]</div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>xk</strong> – mean state vector containing the robot position and heading (<span class="math notranslate nohighlight">\(x_k=[x_k^T, y_k^T, z_k^T, \psi_k^T]^T\)</span>) represented in the N-Frame</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>observation noise (Jacobian) matrix eq. <a class="reference internal" href="#equation-eq-jhmv-ekf4dofauvvelocitymmdvldepthyawom">(6)</a>.</p>
+<dd class="field-even"><p>observation noise (Jacobian) matrix eq. <a class="reference internal" href="#equation-eq-jhmv-ekf4dofauvvelocitymmdvldepthyawom">(7)</a>.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -476,11 +473,8 @@ a zero mean Gaussian noise.</p>
 <dt class="sig sig-object py" id="EKF_4DOFAUV_CtVelocityMM_DVLDepthYawOM.EKF_4DOFAUV_CtVelocityMM_DVLDepthYawOM.h">
 <span class="sig-name descname"><span class="pre">h</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xk_bar</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#EKF_4DOFAUV_CtVelocityMM_DVLDepthYawOM.EKF_4DOFAUV_CtVelocityMM_DVLDepthYawOM.h" title="Link to this definition">¶</a></dt>
 <dd><p>The observation model of the EKF is given by:</p>
-<dl class="simple">
-<dt>..math::</dt><dd><p>zk=h(xk,v_k)
-:label:èq-EKF-observation-model</p>
-</dd>
-</dl>
+<div class="math notranslate nohighlight" id="equation-eq-ekf-observation-model">
+<span class="eqno">(8)<a class="headerlink" href="#equation-eq-ekf-observation-model" title="Link to this equation">¶</a></span>\[z_k=h(x_k,v_k)\]</div>
 <p>This method computes the mean of this direct observation model. Therefore it does not depend on v_k since it is
 a zero mean Gaussian noise.</p>
 <dl class="field-list simple">
@@ -529,8 +523,8 @@ a zero mean Gaussian noise.</p>
 </section>
 <section id="dof-differential-drive-mobile-robot">
 <h1>3 DOF Differential Drive Mobile Robot<a class="headerlink" href="#dof-differential-drive-mobile-robot" title="Link to this heading">¶</a></h1>
-<section id="differential-drive-grid-ekf-using-an-input-displacement-motion-model">
-<h2>Differential Drive Grid EKF Using an Input displacement Motion Model<a class="headerlink" href="#differential-drive-grid-ekf-using-an-input-displacement-motion-model" title="Link to this heading">¶</a></h2>
+<section id="differential-drive-ekf-localization-using-an-input-displacement-motion-model">
+<h2>Differential Drive EKF Localization Using an Input displacement Motion Model<a class="headerlink" href="#differential-drive-ekf-localization-using-an-input-displacement-motion-model" title="Link to this heading">¶</a></h2>
 <figure class="align-center">
 <a class="reference internal image-reference" href="_images/EKF_3DOFDifferentialDriveInputDisplacement.png"><img alt="EKF_3DOFDifferentialDriveInputDisplacementClass Diagram" src="_images/EKF_3DOFDifferentialDriveInputDisplacement.png" style="width: 796.5px; height: 953.25px;" /></a>
 </figure>
@@ -545,10 +539,15 @@ It inherits from <a class="reference internal" href="#GFLocalization.GFLocalizat
 <dl class="py method">
 <dt class="sig sig-object py" id="EKF_3DOFDifferentialDriveInputDisplacement.EKF_3DOFDifferentialDriveInputDisplacement.__init__">
 <span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">kSteps</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">robot</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#EKF_3DOFDifferentialDriveInputDisplacement.EKF_3DOFDifferentialDriveInputDisplacement.__init__" title="Link to this definition">¶</a></dt>
-<dd><p>Constructor.</p>
+<dd><p>Constructor. Creates the list of  <a class="reference internal" href="#IndexStruct.IndexStruct" title="IndexStruct.IndexStruct"><code class="xref py py-class docutils literal notranslate"><span class="pre">IndexStruct.IndexStruct</span></code></a> instances which is required for the automated plotting of the results.
+Then it defines the inital stawe vecto mean and covariance matrix and initializes the ancestor classes.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>args</strong> – arguments to be passed to the base class constructor</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>kSteps</strong> – number of iterations of the localization loop</p></li>
+<li><p><strong>robot</strong> – simulated robot object</p></li>
+<li><p><strong>args</strong> – arguments to be passed to the base class constructor</p></li>
+</ul>
 </dd>
 </dl>
 </dd></dl>
@@ -556,12 +555,14 @@ It inherits from <a class="reference internal" href="#GFLocalization.GFLocalizat
 <dl class="py method">
 <dt class="sig sig-object py" id="EKF_3DOFDifferentialDriveInputDisplacement.EKF_3DOFDifferentialDriveInputDisplacement.GetInput">
 <span class="sig-name descname"><span class="pre">GetInput</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#EKF_3DOFDifferentialDriveInputDisplacement.EKF_3DOFDifferentialDriveInputDisplacement.GetInput" title="Link to this definition">¶</a></dt>
-<dd><p>Calls the <a class="reference internal" href="DRLocalization.html#DR_3DOFDifferentialDrive.DR_3DOFDifferentialDrive.GetInput" title="DR_3DOFDifferentialDrive.DR_3DOFDifferentialDrive.GetInput"><code class="xref py py-meth docutils literal notranslate"><span class="pre">DR_3DOFDifferentialDrive.DR_3DOFDifferentialDrive.GetInput()</span></code></a> method from the <a class="reference internal" href="DRLocalization.html#DR_3DOFDifferentialDrive.DR_3DOFDifferentialDrive" title="DR_3DOFDifferentialDrive.DR_3DOFDifferentialDrive"><code class="xref py py-class docutils literal notranslate"><span class="pre">DR_3DOFDifferentialDrive.DR_3DOFDifferentialDrive</span></code></a> class to get the
-robot displacement. Then it computes the uncertainty of the robot displacement from the covariance matrix of the encoders.
-Finally, it returns the robot displacement and the uncertainty of the robot displacement.</p>
+<dd><p>Gets the input from the robot. Relates to the motion model as follows:</p>
+<div class="math notranslate nohighlight" id="equation-eq-f-gflocalization">
+<span class="eqno">(9)<a class="headerlink" href="#equation-eq-f-gflocalization" title="Link to this equation">¶</a></span>\[\begin{split}x_k &amp;= f(x_{k-1},u_k,w_k) \\
+w_k &amp;= N(0,Q_k)\end{split}\]</div>
+<p><strong>To be implemented by the student</strong> .</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>uk,Qk: robot displacemnt and the covariance of the robot displacement.</p>
+<dt class="field-odd">Return uk, Qk<span class="colon">:</span></dt>
+<dd class="field-odd"><p>input and covariance of the motion model</p>
 </dd>
 </dl>
 </dd></dl>
@@ -569,20 +570,19 @@ Finally, it returns the robot displacement and the uncertainty of the robot disp
 <dl class="py method">
 <dt class="sig sig-object py" id="EKF_3DOFDifferentialDriveInputDisplacement.EKF_3DOFDifferentialDriveInputDisplacement.f">
 <span class="sig-name descname"><span class="pre">f</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xk_1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">uk</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#EKF_3DOFDifferentialDriveInputDisplacement.EKF_3DOFDifferentialDriveInputDisplacement.f" title="Link to this definition">¶</a></dt>
-<dd><p>Non-linear motion model using as input the robot displacement:</p>
+<dd><p>Non-linear motion model.</p>
 <div class="math notranslate nohighlight">
-\[\begin{split}^N \hat {\bar x}_k&amp;=f(^N\hat x_{k-1},^Bu_k) = {}^Nx_{k-1} \oplus ^Bu_k \\
-{}^Nx_{k-1}&amp;=[^Nx_{k_1}^T~ ^Ny_{k_1}^T~ ^N\psi_{k_1}^T]^T\\
-^Bu_k&amp;=^B[\Delta x_k ~\Delta y_k ~\Delta \psi_k]^T\end{split}\]</div>
+\[\begin{split}^N \hat {\bar x}_k&amp;=f(^N\hat x_{k-1},^Bu_k)\\\end{split}\]</div>
+<p><strong>To be implemented by the student</strong> .</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>xk_1</strong> – previous mean state vector (<span class="math notranslate nohighlight">\(x_{k-1}=[x_{k-1}^T, y_{k-1}^T,\psi_{k-1}^T]^T\)</span>) containing the robot position and heading in the N-Frame</p></li>
-<li><p><strong>uk</strong> – input vector <span class="math notranslate nohighlight">\(u_k=[\Delta x_k ~\Delta y_k ~\Delta \psi_k]^T\)</span> containing the robot displacement referenced in the B-Frame</p></li>
+<li><p><strong>xk_1</strong> – previous mean state vector.</p></li>
+<li><p><strong>uk</strong> – Input vector.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>xk_bar: predicted mean state vector containing the current robot position and heading (<span class="math notranslate nohighlight">\(\bar x_k=[x_k^T, y_k^T, \psi_k^T]^T\)</span>) represented in the N-Frame</p>
+<dd class="field-even"><p>xk_bar: predicted mean state vector.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -590,9 +590,8 @@ Finally, it returns the robot displacement and the uncertainty of the robot disp
 <dl class="py method">
 <dt class="sig sig-object py" id="EKF_3DOFDifferentialDriveInputDisplacement.EKF_3DOFDifferentialDriveInputDisplacement.Jfx">
 <span class="sig-name descname"><span class="pre">Jfx</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xk_1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#EKF_3DOFDifferentialDriveInputDisplacement.EKF_3DOFDifferentialDriveInputDisplacement.Jfx" title="Link to this definition">¶</a></dt>
-<dd><p>Jacobian of the motion model with respect to the state vector:</p>
-<div class="math notranslate nohighlight" id="equation-eq-jfx-ekf-3dofdifferentialdriveinputdisplacement">
-<span class="eqno">(7)<a class="headerlink" href="#equation-eq-jfx-ekf-3dofdifferentialdriveinputdisplacement" title="Link to this equation">¶</a></span>\[J_{fx}=\frac{\partial f(x_{k-1},u_k,w_k)}{\partial x_{k-1}} = \frac{\partial x_{k-1} \oplus (u_k + w_k)}{\partial x_{k-1}} = J_{1\oplus}\]</div>
+<dd><p>Jacobian of the motion model with respect to the state vector. <strong>Method to be overwritten by the child class</strong>.</p>
+<p><strong>To be implemented by the student</strong> .</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>xk_1</strong> – Linearization point. By default the linearization point is the previous state vector taken from a class attribute.</p>
@@ -606,9 +605,8 @@ Finally, it returns the robot displacement and the uncertainty of the robot disp
 <dl class="py method">
 <dt class="sig sig-object py" id="EKF_3DOFDifferentialDriveInputDisplacement.EKF_3DOFDifferentialDriveInputDisplacement.Jfw">
 <span class="sig-name descname"><span class="pre">Jfw</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xk_1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#EKF_3DOFDifferentialDriveInputDisplacement.EKF_3DOFDifferentialDriveInputDisplacement.Jfw" title="Link to this definition">¶</a></dt>
-<dd><p>Jacobian of the motion model with respect to the motion model noise vector:</p>
-<div class="math notranslate nohighlight" id="equation-eq-jfw-ekf-3dofdifferentialdriveinputdisplacement">
-<span class="eqno">(8)<a class="headerlink" href="#equation-eq-jfw-ekf-3dofdifferentialdriveinputdisplacement" title="Link to this equation">¶</a></span>\[J_{fx}=\frac{\partial f(x_{k-1},u_k,w_k)}{\partial w_k} = \frac{\partial x_{k-1} \oplus (u_k + w_k)}{\partial w_k} = J_{2\oplus}\]</div>
+<dd><p>Jacobian of the motion model with respect to the noise vector. <strong>Method to be overwritten by the child class</strong>.</p>
+<p><strong>To be implemented by the student</strong> .</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>xk_1</strong> – Linearization point. By default the linearization point is the previous state vector taken from a class attribute.</p>
@@ -623,13 +621,11 @@ Finally, it returns the robot displacement and the uncertainty of the robot disp
 <dt class="sig sig-object py" id="EKF_3DOFDifferentialDriveInputDisplacement.EKF_3DOFDifferentialDriveInputDisplacement.h">
 <span class="sig-name descname"><span class="pre">h</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xk</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#EKF_3DOFDifferentialDriveInputDisplacement.EKF_3DOFDifferentialDriveInputDisplacement.h" title="Link to this definition">¶</a></dt>
 <dd><p>The observation model of the EKF is given by:</p>
-<dl class="simple">
-<dt>..math::</dt><dd><p>zk=h(xk,v_k)
-:label:èq-EKF-observation-model</p>
-</dd>
-</dl>
+<div class="math notranslate nohighlight" id="equation-eq-ekf-observation-model">
+<span class="eqno">(10)<a class="headerlink" href="#equation-eq-ekf-observation-model" title="Link to this equation">¶</a></span>\[z_k=h(x_k,v_k)\]</div>
 <p>This method computes the mean of this direct observation model. Therefore it does not depend on v_k since it is
 a zero mean Gaussian noise.</p>
+<p><strong>To be implemented by the student</strong> .</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>xk</strong> – mean of the predicted state vector. By default it is taken from the class attribute.</p>
@@ -643,13 +639,14 @@ a zero mean Gaussian noise.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="EKF_3DOFDifferentialDriveInputDisplacement.EKF_3DOFDifferentialDriveInputDisplacement.GetMeasurements">
 <span class="sig-name descname"><span class="pre">GetMeasurements</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#EKF_3DOFDifferentialDriveInputDisplacement.EKF_3DOFDifferentialDriveInputDisplacement.GetMeasurements" title="Link to this definition">¶</a></dt>
-<dd><p>Gets the measurement vector and the measurement noise covariance matrix from the robot. The measurement vector contains the depth read from the depth sensor and the heading read from the compass sensor.</p>
-<div class="math notranslate nohighlight" id="equation-eq-zk-ekf-3dofdifferentialdriveinputdisplacement">
-<span class="eqno">(9)<a class="headerlink" href="#equation-eq-zk-ekf-3dofdifferentialdriveinputdisplacement" title="Link to this equation">¶</a></span>\[\begin{split}z_k&amp;=\begin{bmatrix} z_{depth}^T &amp; \psi_{compass}^T \end{bmatrix}^T\\
-R_k&amp;=\begin{bmatrix} \sigma_{depth}^2 &amp; 0 \\ 0 &amp; \sigma_{compass}^2 \end{bmatrix}\end{split}\]</div>
+<dd><p>Get the measurements from the robot. Corresponds to the observation model:</p>
+<div class="math notranslate nohighlight" id="equation-eq-h">
+<span class="eqno">(11)<a class="headerlink" href="#equation-eq-h" title="Link to this equation">¶</a></span>\[\begin{split}z_k &amp;= h(x_{k},v_k) \\
+v_k &amp;= N(0,R_k)\end{split}\]</div>
+<p><strong>To be implemented by the student</strong> .</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>observation vector <span class="math notranslate nohighlight">\(z_k\)</span> and observation noise covariance matrix <span class="math notranslate nohighlight">\(R_k\)</span> defined in eq. <a class="reference internal" href="#equation-eq-zk-ekf-3dofdifferentialdriveinputdisplacement">(9)</a>.</p>
+<dd class="field-odd"><p>zk, Rk, Hk, Vk: observation vector and covariance of the observation noise. Hk is the Observation matrix and Vk is the noise observation matrix.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -657,8 +654,8 @@ R_k&amp;=\begin{bmatrix} \sigma_{depth}^2 &amp; 0 \\ 0 &amp; \sigma_{compass}^2 
 </dd></dl>
 
 </section>
-<section id="differential-drive-grid-ekf-using-a-constant-velocity-motion-model">
-<h2>Differential Drive Grid EKF Using a Constant Velocity Motion Model<a class="headerlink" href="#differential-drive-grid-ekf-using-a-constant-velocity-motion-model" title="Link to this heading">¶</a></h2>
+<section id="differential-drive-ekf-localization-using-a-constant-velocity-motion-model">
+<h2>Differential Drive EKF Localization Using a Constant Velocity Motion Model<a class="headerlink" href="#differential-drive-ekf-localization-using-a-constant-velocity-motion-model" title="Link to this heading">¶</a></h2>
 <figure class="align-center">
 <a class="reference internal image-reference" href="_images/EKF_3DOFDifferentialDriveCtVelocity.png"><img alt="EKF_3DOFDifferentialDriveCtVelocity Class Diagram" src="_images/EKF_3DOFDifferentialDriveCtVelocity.png" style="width: 796.5px; height: 967.5px;" /></a>
 </figure>
@@ -666,19 +663,21 @@ R_k&amp;=\begin{bmatrix} \sigma_{depth}^2 &amp; 0 \\ 0 &amp; \sigma_{compass}^2 
 <dt class="sig sig-object py" id="EKF_3DOFDifferentialDriveCtVelocity.EKF_3DOFDifferentialDriveCtVelocity">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">EKF_3DOFDifferentialDriveCtVelocity.</span></span><span class="sig-name descname"><span class="pre">EKF_3DOFDifferentialDriveCtVelocity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">kSteps</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">robot</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#EKF_3DOFDifferentialDriveCtVelocity.EKF_3DOFDifferentialDriveCtVelocity" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#GFLocalization.GFLocalization" title="GFLocalization.GFLocalization"><code class="xref py py-class docutils literal notranslate"><span class="pre">GFLocalization</span></code></a>, <a class="reference internal" href="DRLocalization.html#DR_3DOFDifferentialDrive.DR_3DOFDifferentialDrive" title="DR_3DOFDifferentialDrive.DR_3DOFDifferentialDrive"><code class="xref py py-class docutils literal notranslate"><span class="pre">DR_3DOFDifferentialDrive</span></code></a>, <a class="reference internal" href="EKF.html#EKF.EKF" title="EKF.EKF"><code class="xref py py-class docutils literal notranslate"><span class="pre">EKF</span></code></a></p>
+<p>This class implements an EKF localization filter for a 3 DOF Differential Drive using a constant velocity motion model incorporating
+yaw measurements from the compass sensor and lineal velocity measurements computed from the odeometry.
+It inherits from <a class="reference internal" href="#GFLocalization.GFLocalization" title="GFLocalization.GFLocalization"><code class="xref py py-class docutils literal notranslate"><span class="pre">GFLocalization.GFLocalization</span></code></a> to implement a localization filter, from the <a class="reference internal" href="DRLocalization.html#DR_3DOFDifferentialDrive.DR_3DOFDifferentialDrive" title="DR_3DOFDifferentialDrive.DR_3DOFDifferentialDrive"><code class="xref py py-class docutils literal notranslate"><span class="pre">DR_3DOFDifferentialDrive.DR_3DOFDifferentialDrive</span></code></a> class and, finally, it inherits from
+<a class="reference internal" href="EKF.html#EKF.EKF" title="EKF.EKF"><code class="xref py py-class docutils literal notranslate"><span class="pre">EKF.EKF</span></code></a> to use the EKF Gaussian filter implementation for the localization.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="EKF_3DOFDifferentialDriveCtVelocity.EKF_3DOFDifferentialDriveCtVelocity.__init__">
 <span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">kSteps</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">robot</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#EKF_3DOFDifferentialDriveCtVelocity.EKF_3DOFDifferentialDriveCtVelocity.__init__" title="Link to this definition">¶</a></dt>
-<dd><p>Constructor.</p>
+<dd><p>Constructor. Creates the list of  <a class="reference internal" href="#IndexStruct.IndexStruct" title="IndexStruct.IndexStruct"><code class="xref py py-class docutils literal notranslate"><span class="pre">IndexStruct.IndexStruct</span></code></a> instances which is required for the automated plotting of the results.
+Then it defines the inital state vector mean and covariance matrix and initializes the ancestor classes.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>x0</strong> – initial state</p></li>
-<li><p><strong>P0</strong> – initial covariance</p></li>
-<li><p><strong>index</strong> – Named tuple used to relate the state vector, the simulation and the observation vectors (<a class="reference internal" href="#IndexStruct.IndexStruct" title="IndexStruct.IndexStruct"><code class="xref py py-class docutils literal notranslate"><span class="pre">IndexStruct.IndexStruct</span></code></a>)</p></li>
-<li><p><strong>kSteps</strong> – simulation time steps</p></li>
-<li><p><strong>robot</strong> – Simulated Robot object</p></li>
-<li><p><strong>args</strong> – arguments to be passed to the parent constructor</p></li>
+<li><p><strong>kSteps</strong> – number of iterations of the localization loop</p></li>
+<li><p><strong>robot</strong> – simulated robot object</p></li>
+<li><p><strong>args</strong> – arguments to be passed to the base class constructor</p></li>
 </ul>
 </dd>
 </dl>
@@ -687,16 +686,19 @@ R_k&amp;=\begin{bmatrix} \sigma_{depth}^2 &amp; 0 \\ 0 &amp; \sigma_{compass}^2 
 <dl class="py method">
 <dt class="sig sig-object py" id="EKF_3DOFDifferentialDriveCtVelocity.EKF_3DOFDifferentialDriveCtVelocity.f">
 <span class="sig-name descname"><span class="pre">f</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xk_1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">uk</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#EKF_3DOFDifferentialDriveCtVelocity.EKF_3DOFDifferentialDriveCtVelocity.f" title="Link to this definition">¶</a></dt>
-<dd><p>Motion model of the EKF <strong>to be overwritten by the child class</strong>.</p>
+<dd><p>Non-linear motion model.</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}^N \hat {\bar x}_k&amp;=f(^N\hat x_{k-1},^Bu_k)\\\end{split}\]</div>
+<p><strong>To be implemented by the student</strong> .</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>xk_1</strong> – previous mean state vector</p></li>
-<li><p><strong>uk</strong> – input vector</p></li>
+<li><p><strong>xk_1</strong> – previous mean state vector.</p></li>
+<li><p><strong>uk</strong> – Input vector.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return xk_bar, Pk_bar<span class="colon">:</span></dt>
-<dd class="field-even"><p>predicted mean state vector and its covariance matrix</p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>xk_bar: predicted mean state vector.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -705,6 +707,7 @@ R_k&amp;=\begin{bmatrix} \sigma_{depth}^2 &amp; 0 \\ 0 &amp; \sigma_{compass}^2 
 <dt class="sig sig-object py" id="EKF_3DOFDifferentialDriveCtVelocity.EKF_3DOFDifferentialDriveCtVelocity.Jfx">
 <span class="sig-name descname"><span class="pre">Jfx</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xk_1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#EKF_3DOFDifferentialDriveCtVelocity.EKF_3DOFDifferentialDriveCtVelocity.Jfx" title="Link to this definition">¶</a></dt>
 <dd><p>Jacobian of the motion model with respect to the state vector. <strong>Method to be overwritten by the child class</strong>.</p>
+<p><strong>To be implemented by the student</strong> .</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>xk_1</strong> – Linearization point. By default the linearization point is the previous state vector taken from a class attribute.</p>
@@ -719,6 +722,7 @@ R_k&amp;=\begin{bmatrix} \sigma_{depth}^2 &amp; 0 \\ 0 &amp; \sigma_{compass}^2 
 <dt class="sig sig-object py" id="EKF_3DOFDifferentialDriveCtVelocity.EKF_3DOFDifferentialDriveCtVelocity.Jfw">
 <span class="sig-name descname"><span class="pre">Jfw</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xk_1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#EKF_3DOFDifferentialDriveCtVelocity.EKF_3DOFDifferentialDriveCtVelocity.Jfw" title="Link to this definition">¶</a></dt>
 <dd><p>Jacobian of the motion model with respect to the noise vector. <strong>Method to be overwritten by the child class</strong>.</p>
+<p><strong>To be implemented by the student</strong> .</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>xk_1</strong> – Linearization point. By default the linearization point is the previous state vector taken from a class attribute.</p>
@@ -733,13 +737,11 @@ R_k&amp;=\begin{bmatrix} \sigma_{depth}^2 &amp; 0 \\ 0 &amp; \sigma_{compass}^2 
 <dt class="sig sig-object py" id="EKF_3DOFDifferentialDriveCtVelocity.EKF_3DOFDifferentialDriveCtVelocity.h">
 <span class="sig-name descname"><span class="pre">h</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xk</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#EKF_3DOFDifferentialDriveCtVelocity.EKF_3DOFDifferentialDriveCtVelocity.h" title="Link to this definition">¶</a></dt>
 <dd><p>The observation model of the EKF is given by:</p>
-<dl class="simple">
-<dt>..math::</dt><dd><p>zk=h(xk,v_k)
-:label:èq-EKF-observation-model</p>
-</dd>
-</dl>
+<div class="math notranslate nohighlight" id="equation-eq-ekf-observation-model">
+<span class="eqno">(12)<a class="headerlink" href="#equation-eq-ekf-observation-model" title="Link to this equation">¶</a></span>\[z_k=h(x_k,v_k)\]</div>
 <p>This method computes the mean of this direct observation model. Therefore it does not depend on v_k since it is
 a zero mean Gaussian noise.</p>
+<p><strong>To be implemented by the student</strong> .</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>xk</strong> – mean of the predicted state vector. By default it is taken from the class attribute.</p>
@@ -753,9 +755,14 @@ a zero mean Gaussian noise.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="EKF_3DOFDifferentialDriveCtVelocity.EKF_3DOFDifferentialDriveCtVelocity.GetInput">
 <span class="sig-name descname"><span class="pre">GetInput</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#EKF_3DOFDifferentialDriveCtVelocity.EKF_3DOFDifferentialDriveCtVelocity.GetInput" title="Link to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p></p>
+<dd><p>Gets the input from the robot. Relates to the motion model as follows:</p>
+<div class="math notranslate nohighlight" id="equation-eq-f-gflocalization">
+<span class="eqno">(13)<a class="headerlink" href="#equation-eq-f-gflocalization" title="Link to this equation">¶</a></span>\[\begin{split}x_k &amp;= f(x_{k-1},u_k,w_k) \\
+w_k &amp;= N(0,Q_k)\end{split}\]</div>
+<p><strong>To be implemented by the student</strong> .</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return uk, Qk<span class="colon">:</span></dt>
+<dd class="field-odd"><p>input and covariance of the motion model</p>
 </dd>
 </dl>
 </dd></dl>
@@ -763,9 +770,14 @@ a zero mean Gaussian noise.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="EKF_3DOFDifferentialDriveCtVelocity.EKF_3DOFDifferentialDriveCtVelocity.GetMeasurements">
 <span class="sig-name descname"><span class="pre">GetMeasurements</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#EKF_3DOFDifferentialDriveCtVelocity.EKF_3DOFDifferentialDriveCtVelocity.GetMeasurements" title="Link to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
+<dd><p>Get the measurements from the robot. Corresponds to the observation model:</p>
+<div class="math notranslate nohighlight" id="equation-eq-h">
+<span class="eqno">(14)<a class="headerlink" href="#equation-eq-h" title="Link to this equation">¶</a></span>\[\begin{split}z_k &amp;= h(x_{k},v_k) \\
+v_k &amp;= N(0,R_k)\end{split}\]</div>
+<p><strong>To be implemented by the student</strong> .</p>
+<dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p></p>
+<dd class="field-odd"><p>zk, Rk, Hk, Vk: observation vector and covariance of the observation noise. Hk is the Observation matrix and Vk is the noise observation matrix.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -844,7 +856,7 @@ a zero mean Gaussian noise.</p>
 </ul>
 </li>
 <li><a class="reference internal" href="#dof-differential-drive-mobile-robot">3 DOF Differential Drive Mobile Robot</a><ul>
-<li><a class="reference internal" href="#differential-drive-grid-ekf-using-an-input-displacement-motion-model">Differential Drive Grid EKF Using an Input displacement Motion Model</a><ul>
+<li><a class="reference internal" href="#differential-drive-ekf-localization-using-an-input-displacement-motion-model">Differential Drive EKF Localization Using an Input displacement Motion Model</a><ul>
 <li><a class="reference internal" href="#EKF_3DOFDifferentialDriveInputDisplacement.EKF_3DOFDifferentialDriveInputDisplacement"><code class="docutils literal notranslate"><span class="pre">EKF_3DOFDifferentialDriveInputDisplacement</span></code></a><ul>
 <li><a class="reference internal" href="#EKF_3DOFDifferentialDriveInputDisplacement.EKF_3DOFDifferentialDriveInputDisplacement.__init__"><code class="docutils literal notranslate"><span class="pre">EKF_3DOFDifferentialDriveInputDisplacement.__init__()</span></code></a></li>
 <li><a class="reference internal" href="#EKF_3DOFDifferentialDriveInputDisplacement.EKF_3DOFDifferentialDriveInputDisplacement.GetInput"><code class="docutils literal notranslate"><span class="pre">EKF_3DOFDifferentialDriveInputDisplacement.GetInput()</span></code></a></li>
@@ -857,7 +869,7 @@ a zero mean Gaussian noise.</p>
 </li>
 </ul>
 </li>
-<li><a class="reference internal" href="#differential-drive-grid-ekf-using-a-constant-velocity-motion-model">Differential Drive Grid EKF Using a Constant Velocity Motion Model</a><ul>
+<li><a class="reference internal" href="#differential-drive-ekf-localization-using-a-constant-velocity-motion-model">Differential Drive EKF Localization Using a Constant Velocity Motion Model</a><ul>
 <li><a class="reference internal" href="#EKF_3DOFDifferentialDriveCtVelocity.EKF_3DOFDifferentialDriveCtVelocity"><code class="docutils literal notranslate"><span class="pre">EKF_3DOFDifferentialDriveCtVelocity</span></code></a><ul>
 <li><a class="reference internal" href="#EKF_3DOFDifferentialDriveCtVelocity.EKF_3DOFDifferentialDriveCtVelocity.__init__"><code class="docutils literal notranslate"><span class="pre">EKF_3DOFDifferentialDriveCtVelocity.__init__()</span></code></a></li>
 <li><a class="reference internal" href="#EKF_3DOFDifferentialDriveCtVelocity.EKF_3DOFDifferentialDriveCtVelocity.f"><code class="docutils literal notranslate"><span class="pre">EKF_3DOFDifferentialDriveCtVelocity.f()</span></code></a></li>

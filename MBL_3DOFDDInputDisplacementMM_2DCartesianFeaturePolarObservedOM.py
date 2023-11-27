@@ -17,8 +17,6 @@ class MBL_3DOFDDInputDisplacementMM_2DCartesianFeaturePolarObservedOM(Cartesian2
         self.Pose = globals()["Pose3D"]
         super().__init__(*args)
 
-
-
 if __name__ == '__main__':
 
     M = [CartesianFeature(np.array([[-40, 5]]).T),
@@ -27,19 +25,7 @@ if __name__ == '__main__':
            CartesianFeature(np.array([[-3, 50]]).T),
            CartesianFeature(np.array([[-20, 3]]).T),
            CartesianFeature(np.array([[40,-40]]).T)]  # feature map. Position of 2 point features in the world frame.
-    #M = [CartesianFeature(np.array([[-10, 5]]).T),
-           # CartesianFeature(np.array([[-5, 10]]).T),
-           # CartesianFeature(np.array([[-5, 15]]).T),
-           # CartesianFeature(np.array([[-3, 10]]).T),
-           # CartesianFeature(np.array([[-10, 3]]).T),
-           # CartesianFeature(np.array([[10,-10]]).T)]  # feature map. Position of 2 point features in the world frame.
 
-    # M = [CartesianFeature(np.array([[-40, 5, 0]]).T),
-    #        CartesianFeature(np.array([[-5, 40, 0]]).T),
-    #        CartesianFeature(np.array([[-5, 25, 0]]).T),
-    #        CartesianFeature(np.array([[-3, 50, 0]]).T),
-    #        CartesianFeature(np.array([[-20, 3, 0]]).T),
-    #        CartesianFeature(np.array([[40, -40, 0]]).T)]  # feature map. Position of 3 point features in the world frame.
 
     xs0 = np.zeros((6, 1))
     kSteps = 5000
