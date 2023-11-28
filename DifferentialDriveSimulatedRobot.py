@@ -55,7 +55,8 @@ class DifferentialDriveSimulatedRobot(SimulatedRobot):
         super().__init__(xs0, map,*args) # call the parent class constructor
 
         # Initialize the motion model noise
-        self.Qsk = np.diag(np.array([0.1 ** 2, 0.01 ** 2, np.deg2rad(1) ** 2]))  # simulated acceleration noise
+        # self.Qsk = np.diag(np.array([0.1 ** 2, 0.01 ** 2, np.deg2rad(1) ** 2]))  # simulated acceleration noise (Original Line)
+        self.Qsk = np.array([0.1 ** 2, 0.01 ** 2, np.deg2rad(1) ** 2]).reshape(3,1)  # I changed the line above to the following (David's Modification) because in fs, I'm operating on vectors, not matrices.
         self.usk = np.zeros((3, 1))  # simulated input to the motion model
 
         # Inititalize the robot parameters
@@ -74,7 +75,7 @@ class DifferentialDriveSimulatedRobot(SimulatedRobot):
         self.xy_feature_reading_frequency = 50  # frequency of XY feature readings
         self.xy_max_range = 50  # maximum XY range, used to simulate the field of view
 
-        self.yaw_reading_frequency = 10  # frequency of Yasw readings
+        self.yaw_reading_frequency = 1  # frequency of Yasw readings
         self.v_yaw_std = np.deg2rad(5)  # std deviation of simulated heading noise
 
     def fs(self, xsk_1, usk):  # input velocity motion model with velocity noise
@@ -108,8 +109,59 @@ class DifferentialDriveSimulatedRobot(SimulatedRobot):
         """
 
         # TODO: to be completed by the student
+        # 0.1**2, 0.01**2, np.deg2rad(1)**2  # Covariance Values to test 
+        # np.randomnormal use it idk why haha
+        K = np.eye(3) 
+        '''
+        David's Notes
+        At this point I received usk (velocity vector) like this usk = [u r]
+        Where: u is velocity in x
+               r is angular velocity in z
+        As we're talking about a turtleBot, I don't have velocity in y (v) 
+        due to the config. of the wheels. Leaving it as it is has been causing 
+        me issues with the vector's sum. Therefore, I'm going to add a '0' for 
+        the y velocity (v), resulting in a 3×1 column vector. That's the reason
+        of the line below
+        '''
+        usk = np.insert(usk, 1, 0).reshape(-1, 1)
+    
+        eta_s_k_1 = Pose3D(xsk_1[0:3,0].reshape(3,1))
+        nu_s_k_1 = Pose3D(xsk_1[3:6,0].reshape(3,1))
+        temp0 = nu_s_k_1*self.dt + (1/2)*self.Qsk*(self.dt**2) 
+        eta_s_k = eta_s_k_1.oplus(temp0)
+        
+        # print("eta_s_k:\n",eta_s_k)
+        
+        '''
+        David's Notes
+        Remember that
+        usk      is my Desired Velocity
+        nu_s_k_1 is my Previous Simulated Velocity (k-1)
+        
+        Therefore the difference between them is my ERROR
+        '''
+        nu_s_k = nu_s_k_1 + K@(usk - nu_s_k_1) + self.Qsk*self.dt # @ stands for matrix multiplication
+        
+        # print("nu_s_k:\n",nu_s_k)
+        
+        self.xsk = np.block([[eta_s_k], [nu_s_k]])
+        
+        # print("xsk:\n",self.xsk)
 
-        pass
+
+
+        #
+
+        if self.k % self.visualizationInterval == 0:
+                self.PlotRobot()
+                self.xTraj.append(self.xsk[0, 0])
+                self.yTraj.append(self.xsk[1, 0])
+                self.trajectory.pop(0).remove()
+                self.trajectory = plt.plot(self.xTraj, self.yTraj, marker='.', color='orange', markersize=1)
+
+        self.k += 1
+        return self.xsk
+
 
     def ReadEncoders(self):
         """ Simulates the robot measurements of the left and right wheel encoders.
@@ -119,10 +171,20 @@ class DifferentialDriveSimulatedRobot(SimulatedRobot):
         :return zsk,Rsk: :math:`zk=[n_L~n_R]^T` observation vector containing number of pulses read from the left and right wheel encoders. :math:`R_{s_k}=diag(\\sigma_L^2,\\sigma_R^2)` covariance matrix of the read pulses.
         """
 
-        # TODO: to be completed by the student
+        noise = 10
 
-        pass
+        vx , vy , r = self.robot.xsk[3][0], self.robot.xsk[4][0], self.robot.xsk[5][0]
+        V = np.sqrt(vx**2 + vy**2)
+        V_R = V-(r*self.wheelBase/2)
+        V_L = V+(r*self.wheelBase/2)
+        p = np.pi * (self.wheelRadius*2)
+        rsk = np.array(np.random.normal(0, noise, 2)).T
 
+
+        zsk = np.array([(V_L*self.dt)*(self.robot.pulse_x_wheelTurns/p),(V_R*self.dt)*(self.robot.pulse_x_wheelTurns/p)]).T
+
+        return zsk + rsk , rsk
+    
     def ReadCompass(self):
         """ Simulates the compass reading of the robot.
 
@@ -130,8 +192,29 @@ class DifferentialDriveSimulatedRobot(SimulatedRobot):
         """
 
         # TODO: to be completed by the student
+        
+        # Where:
+        #   self.xsk[2]: angular velocity in z (yaw)
+        #   v_yaw_std: std deviation of simulated heading noise
+        return self.xsk[2] + self.v_yaw_std
 
-        pass
+    def ReadRanges(self):
+        """ Simulates reading the distances to the features in the environment.
+        Returns a list of (feature position, distance to feature) tuples
+        """
+        distances = []
+        Q = 5
+        for f in self.M:
+            actual_distance = np.linalg.norm(self.xsk[:2] - f)
+            if actual_distance > self.xy_max_range:
+            # Outside range, ignore feature
+                continue
+            
+            distances.append([(f, actual_distance)])
+
+        #print(self.xsk[:2])
+        return distances , Q
+
 
     def PlotRobot(self):
         """ Updates the plot of the robot at the current pose """

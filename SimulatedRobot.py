@@ -53,7 +53,7 @@ class SimulatedRobot:
         self.nf = len(map)  # number of features
 
         # Inititalize the robot animation
-        self.vehicleIcon = VehicleIcon('DifferentialDrive.png', scale=5, rotation=90) # Image of the robot to be used in the animation. By default it uses the image of a Differential Mobile Robot.
+        self.vehicleIcon = VehicleIcon('DifferentialDrive.png', scale=1, rotation=90) # Image of the robot to be used in the animation. By default it uses the image of a Differential Mobile Robot.
         self.vehicleFig = plt.figure()
         self.vehicleAxes = plt.axes()
         plt.xlabel("x")
@@ -69,7 +69,7 @@ class SimulatedRobot:
         self.yTraj = [xs0[1, 0]]
         self.trajectory = plt.plot(self.xTraj, self.yTraj, 'b')
 
-        self.visualizationInterval = 20 # number of time steps between two visualization updates
+        self.visualizationInterval = 1 # number of time steps between two visualization updates
 
         self.vehicleIcon.plot([xs0[0], xs0[1], xs0[3]])
         self.plt_samples = []

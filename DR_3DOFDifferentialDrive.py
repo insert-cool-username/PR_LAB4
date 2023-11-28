@@ -1,6 +1,6 @@
 from Localization import *
+from Pose import * # I added it due to line 76
 import numpy as np
-from DifferentialDriveSimulatedRobot import *
 
 class DR_3DOFDifferentialDrive(Localization):
     """
@@ -29,10 +29,28 @@ class DR_3DOFDifferentialDrive(Localization):
         :parameter uk: input vector (:math:`u_k=[u_{k}~v_{k}~w_{k}~r_{k}]^T`)
         :return xk: current robot pose estimate (:math:`x_k=[x_{k}~y_{k}~\psi_{k}]^T`)
         """
+# Store previous state and input for Logging purposes
+        self.etak_1 = xk_1  # store previous state
+        self.uk = uk  # store input
 
-        # TODO: to be completed by the student
+        #Obtenemos el desplazamiento en cada rueda
+        d_l = uk[1]*(1/self.robot.pulse_x_wheelTurns)*(2*np.pi)*(self.wheelRadius)
+        d_r = uk[0]*(1/self.robot.pulse_x_wheelTurns)*(2*np.pi)*(self.wheelRadius)
 
-        pass
+        #Obtenemos el desplazamiento del robot
+        d = (d_r+d_l)/2
+        delta_theta = (d_r - d_l)/self.wheelBase
+        theta_k = xk_1[2] + delta_theta
+        x_k = xk_1[0] + (d*np.cos(theta_k))
+        y_k = xk_1[1] + (d*np.sin(theta_k))
+
+        
+        etak = np.array([x_k,y_k,theta_k])
+
+
+        self.xk = self.xk_1.oplus(etak)
+
+        return self.xk
 
     def GetInput(self):
         """
@@ -42,28 +60,7 @@ class DR_3DOFDifferentialDrive(Localization):
         """
 
         # TODO: to be completed by the student
+        ue, rsk = self.robot.ReadEncoders()
+        
+        return ue , rsk
 
-        pass
-
-if __name__ == "__main__":
-
-    # feature map. Position of 2 point features in the world frame.
-    M = [CartesianFeature(np.array([[-40, 5]]).T),
-           CartesianFeature(np.array([[-5, 40]]).T),
-           CartesianFeature(np.array([[-5, 25]]).T),
-           CartesianFeature(np.array([[-3, 50]]).T),
-           CartesianFeature(np.array([[-20, 3]]).T),
-           CartesianFeature(np.array([[40,-40]]).T)]  # feature map. Position of 2 point features in the world frame.
-
-    xs0=np.zeros((6,1))   # initial simulated robot pose
-    robot = DifferentialDriveSimulatedRobot(xs0, M) # instantiate the simulated robot object
-
-    kSteps = 5000 # number of simulation steps
-    xsk_1 = xs0 = np.zeros((6, 1))  # initial simulated robot pose
-    index = [IndexStruct("x", 0, None), IndexStruct("y", 1, None), IndexStruct("yaw", 2, 1)] # index of the state vector used for plotting
-
-    x0=Pose3D(np.zeros((3,1)))
-    dr_robot=DR_3DOFDifferentialDrive(index,kSteps,robot,x0)
-    dr_robot.LocalizationLoop(x0, np.array([[0.5, 0.03]]).T)
-
-    exit(0)
