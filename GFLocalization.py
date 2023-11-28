@@ -81,8 +81,12 @@ class GFLocalization(Localization,GaussianFilter):
         :return xk, Pk: updated state vector and covariance matrix
         """
 
-        # TODO: To be implemented by the student
+        uk, Qk = self.GetInput()
+        xk_bar, Pk_bar = self.Prediction(uk, Qk, xk_1, Pk_1)
 
+        zk, Rk, Hk, Vk = self.GetMeasurements()
+        xk, Pk = self.Update(zk, Rk, xk_bar, Pk_bar)
+        
         return xk, Pk
 
     def LocalizationLoop(self, x0, P0, usk):
